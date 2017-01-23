@@ -44,6 +44,7 @@ public class AlbergoWS extends HttpServlet {
 		//response.setContentType("text/html");
 		response.setStatus(200);
     	String ris = vista.caricaCorpo("");
+		//ris += vista.formattaListaStanza(db.caricaStanze());
 		//ris = vista.caricaCorpo("main.html");
     	response.getWriter().append(ris);
 		System.out.println("----------- E N D doGet -----------");

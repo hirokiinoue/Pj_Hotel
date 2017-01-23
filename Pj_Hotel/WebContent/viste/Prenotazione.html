@@ -3,28 +3,5 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>Prenotazione</title>
-<script>
-	articolo = "";
-	
-	function carica(metodo,id) {
-		var xhttp = new XMLHttpRequest();
-		xhttp.onreadystatechange = function() {
-			if(this.readyState == 4 && (this.status == 200 || this.status == 401 || this.status == 500)) {
-				if(this.status!=200){ 
-					errore = JSON.parse(this.responseText);
-					console.log(errore);	
-				}else{
-					articolo = JSON.parse(this.responseText);
-					document.getElementById("risultato").innerHTML=articolo.nome + ":" + articolo.prezzo;
-				}
-			}
-		};
-		xhttp.open(metodo, true);
-		xhttp.send();
-	}
-</script>
 </head>
-<body>
 TEST
-</body>
-</html>

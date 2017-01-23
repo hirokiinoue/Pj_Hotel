@@ -45,25 +45,9 @@ public class Vista {
 		{
 			int i = 0;
 			String s = "";
-			s = String.valueOf(i);
-			switch(a.getClass().getSimpleName())
-			{
-			case "Ram":
-				template = caricaParte("articoli/ram.html");
-				template = template.replace("[nome]", a.getNome());
-				template = template.replace("[prezzo]", String.valueOf(a.getPrezzo()));
-				template = template.replace("[giga]", String.valueOf(((Ram) a).getGiga()));
-				template = template.replace("[id]", String.valueOf(((Ram) a).getId()));
-				
-				ris += template;
-				break;
-			default:
-				template = caricaParte("articoli/articolo.html");
-				template = template.replace("[nome]", a.getNome());
-				template = template.replace("[prezzo]", String.valueOf(a.getPrezzo()));
-				template = template.replace("[id]", String.valueOf(a.getId()));
-				ris += template;
-			}
+			template = caricaParte("albergo/stanza.html");
+			template = template.replace("[nomeStanza]", a.getCodice());
+			ris += template;
 		}
 		return ris;
 	}

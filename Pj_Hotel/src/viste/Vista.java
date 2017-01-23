@@ -8,7 +8,7 @@ import hotel.Stanza;
 public class Vista {
 
 	public String menutop = "";
-	private static final String percorsoRoot = "C:\\test\\Pj_Hotel\\WebContent\\viste\\";
+	private static final String percorsoRoot = "/Users/hirokiinoue/git/Pj_Hotel/Pj_Hotel/WebContent/viste/";
 	
 	public Vista(String percorsotop)
 	{

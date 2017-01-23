@@ -21,8 +21,8 @@ public class AlbergoWS extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	private Vista vista;
-	private final static String PERCORSO = "jdbc:sqlite:C:\\sqlite\\hotel";
-	private final static String MENUPAGENAME = "prenotazione.html";
+	private final static String PERCORSO = "jdbc:sqlite:/Users/hirokiinoue/sqlite/albergo.db";
+	private final static String MENUPAGENAME = "menu.html";
        
 	private IDBHotel db;
     /**
@@ -38,15 +38,18 @@ public class AlbergoWS extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		
 		System.out.println("----------- START doGet -----------");
-		response.setContentType("application/json");
-		//response.setContentType("text/html");
+		
+		String ris = "";
+		//response.setContentType("application/json");
+		response.setContentType("text/html");
 		response.setStatus(200);
-    	String ris = vista.caricaCorpo("");
-		//ris += vista.formattaListaStanza(db.caricaStanze());
+ 		//ris += vista.formattaListaStanza(db.caricaStanze());
 		//ris = vista.caricaCorpo("main.html");
-    	response.getWriter().append(ris);
+		//ris = vista.caricaCorpo("main.html");
+    	//response.getWriter().append(ris);
+		response.getWriter().append(vista.menutop);
 		System.out.println("----------- E N D doGet -----------");
 	}
 

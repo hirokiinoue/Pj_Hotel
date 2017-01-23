@@ -16,8 +16,8 @@ public class DBHotel implements IDBHotel{
 
 	public Connection db;
 	private final static String CODHOTEL = "BG001";
-	private final static String SELECTALL_STANZA ="SELECT * FROM stanze";
-	private final static String SELECTSTANZA ="SELECT * FROM stanze WHERE codice = ?";
+	private final static String SELECTALL_STANZA ="SELECT id as codice FROM stanze";
+	private final static String SELECTSTANZA ="SELECT id as codice, costopernotte as costo, fumatori, numeropersona as npersona FROM stanze WHERE id = ?";
 	private final static String SELECTEXTRA = "select "
 											+ "extra.codice as codice"
 											+ ", extra.descrizione as descrizione"

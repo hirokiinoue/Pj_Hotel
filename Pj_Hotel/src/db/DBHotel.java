@@ -15,9 +15,9 @@ import java.sql.Date;
 public class DBHotel implements IDBHotel{
 
 	public Connection db;
-	private final static String CODHOTEL = "BG001";
-	private final static String SELECTALL_STANZA ="SELECT id as codice FROM stanze";
-	private final static String SELECTSTANZA ="SELECT id as codice, costopernotte as costo, fumatori, numeropersona as npersona FROM stanze WHERE id = ?";
+	private final static int IDHOTEL = 1;
+	private final static String SELECTALL_STANZA ="SELECT * FROM stanza";
+	private final static String SELECT_STANZA ="SELECT * FROM stanza WHERE id = ?";
 	private final static String SELECTEXTRA = "select "
 											+ "extra.codice as codice"
 											+ ", extra.descrizione as descrizione"
@@ -30,8 +30,22 @@ public class DBHotel implements IDBHotel{
 											+ "and "
 											+ "stanze.codice = ?";
 	private final static String SELECT_PRENOTAZIONE = "SELECT * FROM prenotazioni WHERE id = ?";
-	private final static String INSERT_UTENTE = "INSERT INTO (email, password, nome, cognome, tipo) VALUES (?,?,?,?,?)";
-	private final static String INSERT_STANZA = "INSERT INTO (codice, costo, fumatori, npersone, codhotel) VALUES (?,?,?,?,?)";
+	private final static String SELECT_PRENOTAZIONE_CON_IDSTANZA = "SELECT * FROM prenotazioni WHERE idstanza = ?";
+	private final static String SELECT_UTENTE_CON_EMAIL = "SELECT * FROM utenti WHERE email=?";
+	private final static String SELECT_UTENTE_CON_ID = "SELECT * FROM utenti WHERE id=?";
+	private final static String SELECT_UTENTE_PRENOTAZIONE = "select "
+															+ "strftime('%y', dataarrivo) as a1"
+															+ ", strftime('%m', dataarrivo) as m1"	
+															+ ", strftime('%d', dataarrivo) as g1"
+															+ ", strftime('%y', datapartenza) as a2"
+															+ ", strftime('%m', datapartenza) as m2"
+															+ ", strftime('%d', datapartenza) as g2"
+															+ ", codstanza"
+															+ ", note "
+															+ "from "
+															+ "prenotazioni where idcliente=?";
+	private final static String INSERT_UTENTE = "INSERT INTO utente (email, password, nome, cognome, tipo) VALUES (?,?,?,?,?)";
+	private final static String INSERT_STANZA = "INSERT INTO stanza (nome, costopernotte, fumatori, numeropersona, idhotel) VALUES (?,?,?,?,?)";
 
 	public DBHotel(String percorso) {
 		db = null;
@@ -48,32 +62,22 @@ public class DBHotel implements IDBHotel{
 	}
 	
 	@Override
-	public Stanza caricaStanza(String codice) {
-		Stanza ris = new Stanza(null,null,"",0,false,0);
-		ArrayList <Extra> extra = new ArrayList<Extra>();
+	public Stanza caricaStanza(int id) {
+		Stanza ris = null;
+		
 		try
 		{
-			PreparedStatement p = db.prepareStatement(SELECTSTANZA);
-			p.setString(1, codice);
+			PreparedStatement p = db.prepareStatement(SELECT_STANZA);
+			p.setInt(1, id);
 			ResultSet rs = p.executeQuery();
 			
-			ris
-				.setCodice(rs.getString("codice"))
-				.setCosto(rs.getDouble("costo"))
-				.setFumatori(rs.getBoolean("fumatori"))
-				.setNpersone(rs.getInt("npersone"));
-			
-			PreparedStatement e = db.prepareStatement(SELECTEXTRA);
-			e.setString(1, codice);
-			ResultSet rd = e.executeQuery();
-
-			while(rd.next())
-			{
-				Extra a = new Extra(rd.getString("codice"),rd.getString("descrizione"),rd.getDouble("costo"));
-				extra.add(a);
-
-			}
-			ris.setExtra(extra);
+			ris = new Stanza(
+						rs.getInt("id")
+						,rs.getString("nome")
+						,rs.getDouble("costopernotte")
+						,rs.getInt("fumatori")
+						,rs.getInt("numeropersona")
+					);
 		}
 		catch (Exception e)
 		{
@@ -90,7 +94,7 @@ public class DBHotel implements IDBHotel{
 			ResultSet rs = stmt.executeQuery(SELECTALL_STANZA);
 			
 			while(rs.next()){
-				lista.add(caricaStanza(rs.getString("codice")));
+				lista.add(caricaStanza(rs.getInt("id")));
 			}
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
@@ -99,12 +103,6 @@ public class DBHotel implements IDBHotel{
 		return lista;
 	}
 
-	public ArrayList<Stanza> carcaStanze(){
-		ArrayList<Stanza> listaStanza = new ArrayList<Stanza>();
-		
-		return listaStanza;
-	}
-	
 	@Override
 	public boolean salvaStanza(Stanza s) {
 	
@@ -113,18 +111,18 @@ public class DBHotel implements IDBHotel{
 		try
 		{
 			PreparedStatement p = db.prepareStatement(INSERT_STANZA);
-			p.setString(1, s.getCodice());
-			p.setDouble(2, s.getCosto());
-			p.setBoolean(3, s.getFumatori());
-			p.setInt(4, s.getNpersone());
-			p.setString(5, CODHOTEL);
+			p.setString(1, s.getNome());
+			p.setDouble(2, s.getCostopernotte());
+			p.setInt(3, s.getFumatori());
+			p.setInt(4, s.getNumeropersona());
+			p.setInt(5, IDHOTEL);
 			p.executeUpdate();
 			
 			ris = true;
 		}
 		catch(Exception e)
 		{
-			e.getMessage();
+			System.out.println(e.getMessage());
 		}
 		return ris;
 	}
@@ -154,42 +152,47 @@ public class DBHotel implements IDBHotel{
 	}
 
 	@Override
-	public Utente caricaUtente(String email) {
+	public Utente caricaUtente(String UtenteEmail) {
 		// TODO Auto-generated method stub
 		Utente ris = null;
+		
 		try
 		{
-			PreparedStatement p = this.db.prepareStatement("select * from utenti where email=?");
-			p.setString(1, email);
+			PreparedStatement p = this.db.prepareStatement(SELECT_UTENTE_CON_EMAIL);
+			p.setString(1, UtenteEmail);
 			ResultSet rs = p.executeQuery();
 			String nome = rs.getString("nome");
 			String cognome = rs.getString("cognome");
+			String email = rs.getString("email");
 			String password = rs.getString("password");
 			String tipo = rs.getString("tipo");
-			ris = new Utente(email,password,nome,cognome,tipo);
-			
-			p = this.db.prepareStatement("select strftime('%y', dataarrivo) as a1, strftime('%m', dataarrivo) as m1, strftime('%d', dataarrivo) as g1, strftime('%y', datapartenza) as a2, strftime('%m', datapartenza) as m2, strftime('%d', datapartenza) as g2, codstanza, note  from prenotazioni where email=?");
-			p.setString(1, email);
-			rs = p.executeQuery();
-			
-			while(rs.next())
-			{
-				ris.prenotazioni.add
-				(
-					new Prenotazione
-					(
-						ris,
-						new Intervallo
-						(
-							new Date(rs.getInt("a1"), rs.getInt("m1")-1, rs.getInt("g1")),
-							new Date(rs.getInt("a2"), rs.getInt("m2")-1, rs.getInt("g2"))
-						),
-						caricaStanza(rs.getString("codstanza")),
-						rs.getString("note")
-					)	
-						
-				);
-			}
+			String descrizione = rs.getString("descrizione");
+			ris = new Utente(email,password,nome,cognome,tipo,descrizione);
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return ris;
+	}
+
+	public Utente caricaUtente(int UtenteId) {
+		// TODO Auto-generated method stub
+		Utente ris = null;
+		
+		try
+		{
+			PreparedStatement p = this.db.prepareStatement(SELECT_UTENTE_CON_ID);
+			p.setInt(1, UtenteId);
+			ResultSet rs = p.executeQuery();
+			String nome = rs.getString("nome");
+			String cognome = rs.getString("cognome");
+			String email = rs.getString("email");
+			String password = rs.getString("password");
+			String tipo = rs.getString("tipo");
+			String descrizione = rs.getString("descrizione");
+			ris = new Utente(email,password,nome,cognome,tipo,descrizione);
 		}
 		catch(SQLException e)
 		{
@@ -230,7 +233,7 @@ public class DBHotel implements IDBHotel{
 			prenotazione = new Prenotazione(
 					caricaUtente(rs.getString("email"))
 					, i
-					,caricaStanza(rs.getString("codstanza"))
+					,caricaStanza(rs.getInt("idStanza"))
 					, rs.getString("descrizione")
 			);
 		} catch (SQLException e) {
@@ -241,7 +244,32 @@ public class DBHotel implements IDBHotel{
 	}
 
 	@Override
-	public boolean salvaPrenotazione() {
+	public ArrayList<Prenotazione> caricaPrenotazione(Stanza stanza) {
+
+		ArrayList<Prenotazione> prenotazione = new ArrayList<Prenotazione>();
+		
+		try {
+			PreparedStatement p = this.db.prepareStatement(SELECT_PRENOTAZIONE_CON_IDSTANZA);
+			p.setInt(1, stanza.getId());
+			ResultSet rs = p.executeQuery();
+			while(rs.next()){
+				Intervallo i = new Intervallo(rs.getDate("dataarrivo"),rs.getDate("datapartenza"));
+				prenotazione.add( new Prenotazione(
+						caricaUtente(rs.getInt("idUtente"))
+						, i
+						,caricaStanza(rs.getInt("idStanza"))
+						, rs.getString("descrizione"))
+				);
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		
+		return prenotazione;
+	}
+
+	@Override
+	public boolean salvaPrenotazione(Prenotazione prenotazione) {
 		// TODO Auto-generated method stub
 		return false;
 	}

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public interface IDBHotel {
 
-	Stanza caricaStanza(String codice);
+	Stanza caricaStanza(int id);
 	ArrayList<Stanza> caricaStanze();
 	boolean salvaStanza(Stanza s);
 	boolean salvaUtente(Utente u);
@@ -16,8 +16,9 @@ public interface IDBHotel {
 	boolean salvaExtra (Extra e);
 
 	Prenotazione caricaPrenotazione(String email);
+	ArrayList<Prenotazione> caricaPrenotazione(Stanza stanza);
 	boolean caricaPrenotazioni(Stanza s, String dataArrivo, String dataPartenza);
-	boolean salvaPrenotazione();
+	boolean salvaPrenotazione(Prenotazione prenotazione);
 	boolean salvaPrenotazioni(Stanza s, String dataArrivo, String dataPartenza);
 	
 }

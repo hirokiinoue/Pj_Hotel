@@ -34,7 +34,6 @@ public class Prenotazione {
 	public void setIntervallo(Intervallo intervallo) {
 		this.intervallo = intervallo;
 	}
-
 	
 	public Stanza getStanza() {
 		return stanza;

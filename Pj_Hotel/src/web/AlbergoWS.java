@@ -16,12 +16,13 @@ import viste.Vista;
 /**
  * Servlet implementation class AlbergoWS
  */
-@WebServlet("/Pj_Hotel")
+@WebServlet("/Pj_Hotel_v2")
 public class AlbergoWS extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	private Vista vista;
-	private final static String PERCORSO = "jdbc:sqlite:/Users/hirokiinoue/sqlite/albergo.db";
+	//private final static String PERCORSO = "jdbc:sqlite:/Users/hirokiinoue/sqlite/albergo.db";
+	private final static String PERCORSO = "jdbc:sqlite:C:\\sqlite\\albergo.db";
 	private final static String MENUPAGENAME = "menu.html";
        
 	private IDBHotel db;
@@ -45,11 +46,28 @@ public class AlbergoWS extends HttpServlet {
 		//response.setContentType("application/json");
 		response.setContentType("text/html");
 		response.setStatus(200);
- 		//ris += vista.formattaListaStanza(db.caricaStanze());
-		//ris = vista.caricaCorpo("main.html");
-		//ris = vista.caricaCorpo("main.html");
-    	//response.getWriter().append(ris);
-		response.getWriter().append(vista.menutop);
+		
+		String comando = request.getParameter("comando");
+		
+		if(comando == null)
+			comando = "";
+		System.out.println(comando);
+		switch(comando){
+		case "prenotazione":
+			ris = vista.caricaCorpo("albergo/Prenotazione_header.html");
+	 		ris += vista.formattaListaStanza(db.caricaStanze());
+			ris += vista.caricaParte("albergo/Prenotazione_footer.html");
+			break;
+		case "registrazione":
+			ris = vista.formattaRegistrazione(request.getParameter("idStanza"), request.getParameter("nomeStanza"));
+			break;
+		case "controlloData":
+			ris = vista.formattaConferma(request.getParameter("idStanza"), request.getParameter("nomeStanza"), request.getParameter("dataarrivo"), request.getParameter("datapartenza"));
+			break;
+		default:
+			ris = vista.caricaCorpo("main.html");
+		}
+ 		response.getWriter().append(ris);
 		System.out.println("----------- E N D doGet -----------");
 	}
 

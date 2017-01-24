@@ -1,154 +1,91 @@
 package hotel;
 
-import java.util.ArrayList;
-
-import db.Intervallo;
-
 public class Stanza {
 
-	private ArrayList<Extra> extra = null;
-	private ArrayList<Prenotazione> prenotazioni = null;
-	private String codice;
-	private double costo;
-	private boolean fumatori;
-	private int npersone;
+	private int id = 0;
+	private String nome;
+	private double costopernotte;
+	private int fumatori;
+	private int numeropersona;
 	
-	public Stanza(ArrayList<Extra> extra, ArrayList<Prenotazione> prenotazioni,
-			String codice, double costo, boolean fumatori, int npersone) {
-		this.extra = extra;
-		this.prenotazioni = prenotazioni;
-		this.codice = codice;
-		this.costo = costo;
+	public Stanza(String nome, double costopernotte, int fumatori, int numeropersona) {
+		this.nome = nome;
+		this.costopernotte = costopernotte;
 		this.fumatori = fumatori;
-		this.npersone = npersone;
+		this.numeropersona = numeropersona;
 	}
 
-	public Stanza(String codice, double costo, boolean fumatori, int npersone) {
-		this.extra = new ArrayList<Extra>();
-		this.prenotazioni = new ArrayList<Prenotazione>();
-		this.codice = codice;
-		this.costo = costo;
+	public Stanza(int id, String nome, double costopernotte, int fumatori, int numeropersona) {
+		this.id = id;
+		this.nome = nome;
+		this.costopernotte = costopernotte;
 		this.fumatori = fumatori;
-		this.npersone = npersone;
-	}
-
-	
-	public ArrayList<Extra> getExtra() {
-		return extra;
-	}
-
-	public Stanza setExtra(ArrayList<Extra> extra) {
-		this.extra = extra;
-		return this;
-	}
-
-	public ArrayList<Prenotazione> getPrenotazione() {
-		return prenotazioni;
-	}
-
-	public Stanza setPrenotazione(ArrayList<Prenotazione> prenotazione) {
-		this.prenotazioni = prenotazione;
-		return this;
+		this.numeropersona = numeropersona;
 	}
 	
-	public boolean nuovaPrenotazione(Intervallo intervallo, Utente utente)
-	{
-		boolean ris=false;
-		for(Prenotazione p: prenotazioni)
-			if(p.getIntervallo().collide(intervallo))
-				ris=true;
-		if(!ris)
-			prenotazioni.add(new Prenotazione(utente,intervallo,this,""));
-		
-		
-		return ris;
-		
-	}
-	
-	public String stampaPrenotazioni(){
-		String ris = "";
-		for(Prenotazione p: prenotazioni)
-			ris += p.toString();
-		
-		return ris;
+	public int getId() {
+		return id;
 	}
 
-	public String stampaPrenotazioni(Intervallo i){
-		String ris = "";
-		for(Prenotazione p: prenotazioni)
-			if(i.interno(p.getIntervallo()))
-				ris += p.toString();
-		
-		return ris;
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public Stanza addExtra(Extra e){
-		boolean trovato = false;
-		for(Extra x:extra)
-			if(x.getcodice().equals(e.getcodice()))
-				trovato = true;
-		if(!trovato)		
-			this.extra.add(e);
-		return this;
-		
-	}
-	public String getCodice() {
-		return codice;
+
+	public String getNome() {
+		return nome;
 	}
 
-	public Stanza setCodice(String codice) {
-		this.codice = codice;
-		return this;
+
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
-	public double getCosto() {
-		return costo;
+
+	public double getCostopernotte() {
+		return costopernotte;
 	}
 
-	public Stanza setCosto(double costo) {
-		this.costo = costo;
-		return this;
+
+	public void setCostopernotte(double costopernotte) {
+		this.costopernotte = costopernotte;
 	}
 
-	public boolean getFumatori() {
+
+	public int getFumatori() {
 		return fumatori;
 	}
 
-	public Stanza setFumatori(boolean fumatori) {
+
+	public void setFumatori(int fumatori) {
 		this.fumatori = fumatori;
-		return this;
-	}
-	
-	public int getNpersone() {
-		return npersone;
 	}
 
-	public Stanza setNpersone(int npersone) {
-		this.npersone = npersone;
-		return this;
+
+	public int getNumeropersona() {
+		return numeropersona;
 	}
+
+
+	public void setNumeropersona(int numeropersona) {
+		this.numeropersona = numeropersona;
+	}
+	
+	
 
 	public String scheda(){
-		double totale=costo;
-		String ris = "La stanza " +codice +" per "+npersone+ " persone, viene " + costo + " € a notte."
-				+"\nFumatori: "+fumatori;
-		try
-		{
-			if (extra!=null)
-				ris += "\nLa stanza è fornita dei seguenti extra:\n";
-			for(Extra e:extra)
-			{
-				ris += e.getDescrizione() + " al costo di " + e.getPrezzo() + " €\n";
-				totale+=e.getPrezzo();
-			}
-		}
-		catch(Exception e)
-		{
-			ris += "\nLa tua stanza non è fornita di alcun extra";
-		}
+		String Yes = "Si'";
+		String No = "No";
 		
-		ris += "\n\nTOTALE COSTO DELLA STANZA: " +totale +" €.";
+		String ris = "La stanza " + this.nome +" per "+ this.numeropersona + " persone, viene " + this.costopernotte + " € a notte."
+				+"\nFumatori: ";
+		if(this.fumatori == 0)
+			ris += No;
+		else
+			ris += Yes;
+		
 		return ris;
 	}
-	
+
 }

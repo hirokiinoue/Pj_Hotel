@@ -1,0 +1,6 @@
+CREATE TABLE extra (
+	id 			INTEGER PRIMARY KEY	AUTOINCREMENT,
+	nome		VARCHAR(200),
+	costo		REAL	NOT NULL,
+	descrizione	VARCHAR(200)
+);

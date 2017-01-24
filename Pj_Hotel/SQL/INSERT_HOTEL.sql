@@ -1,0 +1,1 @@
+INSERT INTO hotel (nome,email,indirizzo,tel,cap,citta,stelle) VALUES ('HOTEL CALIFORNIA','info@hotelcaliforniaroma.it','Via Principe Amedeo, 39','(+39)06.48.22.002','00185','Roma',3);

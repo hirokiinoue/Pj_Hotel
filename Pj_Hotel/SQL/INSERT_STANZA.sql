@@ -1,0 +1,1 @@
+INSERT INTO stanza (nome,costopernotte,fumatori,numeropersona,descrizione,idhotel) VALUES ('101',50.00,0,2,'camera matorimoniale',1);
